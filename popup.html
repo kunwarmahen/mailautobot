@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Mail Buddy</title>
+    <title>Mail Auto Bot</title>
     <style>
       :root {
         --primary-color: #2563eb;
@@ -30,7 +30,7 @@
 
       body {
         width: 300px;
-        height: 400px;
+        height: 600px;
         padding: 0.75rem;
         font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
         background-color: var(--background-color);
@@ -179,6 +179,65 @@
         color: #94a3b8;
       }
 
+      /* Mood selector styles */
+      .mood-selector {
+        display: flex;
+        gap: 8px;
+        justify-content: center;
+        padding: 4px 0;
+      }
+
+      .mood-btn-container {
+        position: relative;
+      }
+
+      .mood-btn {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        border: 1.5px solid var(--border-color);
+        background-color: white;
+        cursor: pointer;
+        font-size: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.2s ease;
+        padding: 0;
+      }
+
+      .mood-btn:hover {
+        border-color: var(--primary-color);
+        transform: scale(1.05);
+      }
+
+      .mood-btn.selected {
+        background-color: var(--primary-color);
+        color: white;
+        border-color: var(--primary-color);
+      }
+
+      .tooltip {
+        position: absolute;
+        background-color: var(--text-color);
+        color: white;
+        padding: 4px 8px;
+        border-radius: 4px;
+        font-size: 12px;
+        pointer-events: none;
+        opacity: 0;
+        transition: opacity 0.2s;
+        bottom: 100%;
+        left: 50%;
+        transform: translateX(-50%);
+        white-space: nowrap;
+        margin-bottom: 4px;
+      }
+
+      .mood-btn-container:hover .tooltip {
+        opacity: 1;
+      }
+
       .buttons-container {
         display: flex;
         flex-direction: column;
@@ -257,6 +316,29 @@
         placeholder="How can I help you?..."
         spellcheck="true"
       ></textarea>
+
+      <div class="mood-selector">
+        <div class="mood-btn-container">
+          <button class="mood-btn selected" data-mood="professional">👔</button>
+          <span class="tooltip">Professional</span>
+        </div>
+        <div class="mood-btn-container">
+          <button class="mood-btn" data-mood="friendly">😊</button>
+          <span class="tooltip">Friendly</span>
+        </div>
+        <div class="mood-btn-container">
+          <button class="mood-btn" data-mood="funny">😄</button>
+          <span class="tooltip">Funny</span>
+        </div>
+        <div class="mood-btn-container">
+          <button class="mood-btn" data-mood="quirky">🤪</button>
+          <span class="tooltip">Quirky</span>
+        </div>
+        <div class="mood-btn-container">
+          <button class="mood-btn" data-mood="formal">🎩</button>
+          <span class="tooltip">Formal</span>
+        </div>
+      </div>
 
       <div class="buttons-container">
         <button id="sendBtn">

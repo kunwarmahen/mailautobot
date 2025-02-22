@@ -5,6 +5,7 @@ const applyBtn = document.getElementById("applyBtn");
 const settingsButton = document.getElementById("settings-button");
 const textarea = document.getElementById("userInput");
 const chatbox = document.getElementById("chatbox");
+const moodButtons = document.querySelectorAll(".mood-btn");
 
 sendBtn.addEventListener("click", sendMessage);
 applyBtn.addEventListener("click", applyToEmail);
@@ -19,6 +20,17 @@ textarea.addEventListener("keydown", (event) => {
   }
 });
 
+moodButtons.forEach((button) => {
+  button.addEventListener("click", () => {
+    // Remove selected class from all buttons
+    moodButtons.forEach((btn) => btn.classList.remove("selected"));
+    // Add selected class to clicked button
+    button.classList.add("selected");
+    let selectedMood = button.dataset.mood;
+    updateSystemPrompt(selectedMood);
+  });
+});
+
 settingsButton.addEventListener("click", () => {
   // Trigger the desired action, such as:
   // 1. Open the options page:
@@ -29,19 +41,95 @@ settingsButton.addEventListener("click", () => {
   // ...
 });
 
-chatHistory.push({
-  role: "system",
-  content: `You are an AI email writer. Your role is to compose funny emails based on user-provided topics or prompts. When responding, format your output as follows:
+// chatHistory.push({
+//   role: "system",
+//   content: `You are an AI email writer. Your role is to compose funny emails based on user-provided topics or prompts. When responding, format your output as follows:
+
+// [Subject:<Insert subject line here>]
+
+// [Email]
+// <Insert email body here>
+
+// Ensure the subject line is concise and relevant, while the email body is clear, well-structured, and tailored to the context. Write in a funny tone, and adapt the style as necessary based on user input.
+// `,
+// });
+
+// Define the system prompts for each mood
+const moodPrompts = {
+  professional: {
+    role: "system",
+    content: `You are an AI email writer. Your role is to compose professional and polished emails based on user-provided topics or prompts. When responding, format your output as follows:
 
 [Subject:<Insert subject line here>]
-
-
 [Email]
 <Insert email body here>
 
-Ensure the subject line is concise and relevant, while the email body is clear, well-structured, and tailored to the context. Write in a funny tone, and adapt the style as necessary based on user input.
-`,
-});
+Ensure the subject line is clear and business-appropriate, while the email body maintains a professional tone with proper business etiquette. Use concise language, clear structure, and maintain a respectful, business-focused approach throughout the email.`,
+  },
+  friendly: {
+    role: "system",
+    content: `You are an AI email writer. Your role is to compose warm and friendly emails based on user-provided topics or prompts. When responding, format your output as follows:
+
+[Subject:<Insert subject line here>]
+[Email]
+<Insert email body here>
+
+Create a subject line that's welcoming but clear, and write the email body in a warm, approachable tone. Use conversational language while maintaining clarity and appropriateness. The email should feel personal and engaging without being overly casual.`,
+  },
+  funny: {
+    role: "system",
+    content: `You are an AI email writer. Your role is to compose funny and entertaining emails based on user-provided topics or prompts. When responding, format your output as follows:
+
+[Subject:<Insert subject line here>]
+[Email]
+<Insert email body here>
+
+Create a witty subject line that grabs attention, and write the email body with humor and playfulness. Include appropriate jokes, wordplay, or light-hearted references while ensuring the main message remains clear. Keep the tone fun but not inappropriate.`,
+  },
+  quirky: {
+    role: "system",
+    content: `You are an AI email writer. Your role is to compose uniquely creative and unconventional emails based on user-provided topics or prompts. When responding, format your output as follows:
+
+[Subject:<Insert subject line here>]
+[Email]
+<Insert email body here>
+
+Create an imaginative subject line, and write the email body with unexpected twists and creative flair. Use unusual analogies, unique perspectives, or unexpected formatting choices while keeping the message comprehensible. Make the email memorable and different without being confusing.`,
+  },
+  formal: {
+    role: "system",
+    content: `You are an AI email writer. Your role is to compose highly formal and ceremonious emails based on user-provided topics or prompts. When responding, format your output as follows:
+
+[Subject:<Insert subject line here>]
+[Email]
+<Insert email body here>
+
+Create a proper and formal subject line, and write the email body with utmost attention to formal language and structure. Use sophisticated vocabulary, proper honorifics, and formal email conventions throughout. Maintain the highest level of professionalism and ceremony in the communication.`,
+  },
+};
+
+// Default mood if none is selected
+const defaultMood = "professional";
+
+// Function to update the system prompt in chatHistory
+function updateSystemPrompt(selectedMood = defaultMood) {
+  if (chatHistory.length > 0) {
+    // Replace the first item if it's a system message
+    if (chatHistory[0].role === "system") {
+      chatHistory[0] = moodPrompts[selectedMood] || moodPrompts[defaultMood];
+    } else {
+      // Insert the system message at the beginning if not present
+      chatHistory.unshift(
+        moodPrompts[selectedMood] || moodPrompts[defaultMood]
+      );
+    }
+  } else {
+    // Initialize chatHistory with the system message if empty
+    chatHistory.push(moodPrompts[selectedMood] || moodPrompts[defaultMood]);
+  }
+}
+
+updateSystemPrompt();
 
 // Function to format message with paragraphs
 function formatMessage(text) {
@@ -63,7 +151,7 @@ function sendMessage() {
     textarea.disabled = true;
     sendBtn.disabled = true;
     applyBtn.disabled = true;
-
+    print(chatHistory);
     // Send message to background script
     chrome.runtime.sendMessage(
       { action: "chat", messages: chatHistory },
