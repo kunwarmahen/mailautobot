@@ -1,0 +1,25 @@
+{
+  "manifest_version": 3,
+  "name": "Mail Auto Bot",
+  "version": "1.0",
+  "description": "Personal email writting assistant which works like grammarly",
+  "permissions": ["activeTab", "tabs", "scripting", "storage"],
+  "host_permissions": ["<all_urls>"],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": ["https://mail.google.com/*"],
+      "js": ["content.js"],
+      "run_at": "document_end"
+    }
+  ],
+  "action": {
+    "default_popup": "popup.html"
+  },
+  "options_page": "options.html",
+  "icons": {
+    "48": "icon.png"
+  }
+}

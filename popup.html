@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Mail Buddy</title>
+    <style>
+      :root {
+        --primary-color: #2563eb;
+        --primary-hover: #1d4ed8;
+        --primary-active: #1e40af;
+        --secondary-color: #4e9947;
+        --secondary-hover: #18b33f;
+        --secondary-active: #3a733b;
+        --background-color: #f8fafc;
+        --border-color: #e2e8f0;
+        --text-color: #334155;
+        --text-hover: #f7f1f1;
+        --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+        --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
+          0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        --border-radius: 8px;
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        width: 300px;
+        height: 400px;
+        padding: 0.75rem;
+        font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+        background-color: var(--background-color);
+        color: var(--text-color);
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+      }
+
+      #settings-div {
+        display: flex;
+        justify-content: flex-end;
+        padding: 0;
+        height: 15px;
+        margin-left: auto;
+        width: 15px;
+        z-index: 1000;
+        position: absolute;
+        top: 0.5rem;
+        right: 0.5rem;
+      }
+
+      #settings-button {
+        background-color: transparent;
+        border: none;
+        cursor: pointer;
+        padding: 0.25rem;
+        border-radius: 50%;
+        transition: background-color 0.2s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 15px;
+        height: 15px;
+      }
+
+      #settings-button:hover {
+        background-color: rgba(0, 0, 0, 0.05);
+      }
+
+      #settings-button img {
+        width: 20px;
+        height: 20px;
+        opacity: 0.7;
+        transition: opacity 0.2s ease;
+      }
+
+      #settings-button:hover img {
+        opacity: 1;
+      }
+
+      #chatbox {
+        flex-grow: 1;
+        height: 200px;
+        overflow-y: auto;
+        border: 1px solid var(--border-color);
+        border-radius: var(--border-radius);
+        padding: 0.75rem;
+        background-color: rgb(212, 212, 212);
+        box-shadow: var(--shadow);
+        scrollbar-width: thin;
+        scrollbar-color: #cbd5e1 #f1f5f9;
+      }
+
+      #chatbox::-webkit-scrollbar {
+        width: 6px;
+      }
+
+      #chatbox::-webkit-scrollbar-track {
+        background: #f1f5f9;
+        border-radius: var(--border-radius);
+      }
+
+      #chatbox::-webkit-scrollbar-thumb {
+        background: #cbd5e1;
+        border-radius: var(--border-radius);
+        border: 2px solid #f1f5f9;
+      }
+
+      #chatbox::-webkit-scrollbar-thumb:hover {
+        background: #94a3b8;
+      }
+
+      .message {
+        margin-bottom: 12px;
+        padding: 8px;
+        border-radius: 6px;
+        white-space: pre-wrap;
+        word-wrap: break-word;
+      }
+
+      .message.You {
+        background-color: #ec8896;
+        margin-right: 20px;
+      }
+
+      .message.Auto-Bot {
+        background-color: #78b7d4;
+        margin-left: 20px;
+      }
+
+      .message.Error {
+        background-color: #be0c48;
+        color: #d89898;
+      }
+
+      .message-paragraph {
+        margin: 0;
+        padding: 0;
+      }
+
+      .message-paragraph + .message-paragraph {
+        margin-top: 12px;
+      }
+
+      .input-container {
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+      }
+
+      #userInput {
+        width: 100%;
+        min-height: 60px;
+        max-height: 150px;
+        padding: 0.5rem 0.75rem;
+        border: 1.5px solid var(--border-color);
+        border-radius: var(--border-radius);
+        resize: none;
+        font-family: inherit;
+        font-size: 0.875rem;
+        line-height: 1.5;
+        background-color: rgb(213, 248, 246);
+        box-shadow: var(--shadow-sm);
+        transition: all 0.2s ease;
+        overflow-y: auto;
+      }
+
+      #userInput:focus {
+        outline: none;
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+      }
+
+      #userInput::placeholder {
+        color: #94a3b8;
+      }
+
+      .buttons-container {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+      }
+
+      button {
+        width: 100%;
+        padding: 0.5rem 0.75rem;
+        border: none;
+        border-radius: var(--border-radius);
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        font-size: 0.875rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        height: 32px;
+      }
+
+      #sendBtn {
+        background-color: var(--primary-color);
+        color: white;
+        box-shadow: var(--shadow-sm);
+      }
+
+      #sendBtn:hover {
+        background-color: var(--primary-hover);
+      }
+
+      #sendBtn:active {
+        background-color: var(--primary-active);
+        transform: scale(0.98);
+      }
+
+      #applyBtn {
+        background-color: white;
+        color: var(--text-color);
+        border: 1.5px solid var(--border-color);
+        box-shadow: var(--shadow-sm);
+      }
+
+      #applyBtn:hover {
+        background-color: var(--background-color);
+        border-color: #dae0cb;
+        background-color: var(--secondary-hover);
+        color: var(--text-hover);
+      }
+
+      #applyBtn:active {
+        background-color: #f1f5f9;
+        transform: scale(0.98);
+      }
+
+      button:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="settings-div">
+      <button id="settings-button">
+        <img src="settings_icon.png" alt="Settings" />
+      </button>
+    </div>
+
+    <div id="chatbox"></div>
+
+    <div class="input-container">
+      <textarea
+        id="userInput"
+        rows="2"
+        placeholder="How can I help you?..."
+        spellcheck="true"
+      ></textarea>
+
+      <div class="buttons-container">
+        <button id="sendBtn">
+          <svg
+            width="14"
+            height="14"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <line x1="22" y1="2" x2="11" y2="13"></line>
+            <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+          </svg>
+          Send to LLM
+        </button>
+        <button id="applyBtn">
+          <svg
+            width="14"
+            height="14"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <polyline points="20 6 9 17 4 12"></polyline>
+          </svg>
+          Finalize and apply to email
+        </button>
+      </div>
+    </div>
+
+    <script src="popup.js"></script>
+  </body>
+</html>
