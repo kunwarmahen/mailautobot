@@ -14,7 +14,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
           }),
         })
           .then((response) => {
-            console.log(response);
+            // console.log(response);
             if (!response.ok) {
               throw new Error(`HTTP error! status: ${response.status}`);
             }

@@ -31,15 +31,13 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   }
 });
 
-function escapeHTML(html) {
-  var escape = document.createElement("textarea");
-  escape.textContent = html;
-  return escape.innerHTML;
-}
-
 function modifyEmail() {
+  // let composer = document.querySelector(
+  //   'div[role="textbox"][aria-label="Message Body"] > div:first-child'
+  // );
+
   let composer = document.querySelector(
-    'div[role="textbox"][aria-label="Message Body"] > div:first-child'
+    'div[role="textbox"][aria-label="Message Body"]'
   );
 
   if (!composer) {
@@ -50,10 +48,11 @@ function modifyEmail() {
 
   if (composer) {
     const currentContent = composer.innerHTML;
+    console.log("Current content", currentContent);
 
     // Send content to background script for processing
     chrome.runtime.sendMessage(
-      { action: "processContent", content: escapeHTML(currentContent) },
+      { action: "processContent", content: currentContent },
       function (response) {
         if (response && response.modifiedContent) {
           // Update the composer with the modified content
@@ -107,9 +106,9 @@ function addChatButton() {
         button.style.margin = "10px";
         button.style.borderRadius = "20px";
         button.style.backgroundColor = "#04AA6D";
-        button.innerHTML = "Fix grammar";
-        button.setAttribute("aria-label", "Fix grammar");
-        button.setAttribute("data-tooltip", "Fix grammar");
+        button.innerHTML = "Fix email";
+        button.setAttribute("aria-label", "Fix email");
+        button.setAttribute("data-tooltip", "Fix email");
         button.setAttribute("data-tooltip-delay", "800");
         button.addEventListener("click", modifyEmail);
 
